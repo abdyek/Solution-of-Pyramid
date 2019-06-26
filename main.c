@@ -37,6 +37,12 @@ char * fileName = "triangle";
 int * numbers;
 
 int main(int argc, char *argv[]) {
+    int height = 4;
+    len = 1;  
+    for (int i = 0; i<height - 1; i++) {
+        len *= 2;
+    }
+    sumList = (int *)malloc(sizeof(int) * len);
     
     numberOfNodes = getNumberOfNodes();
     heightOfPyramid = getHeightOfPyramid(numberOfNodes);
@@ -55,18 +61,16 @@ int main(int argc, char *argv[]) {
         }
         */
         createPyramid();
+        printf("%d\n", head->left->left->left->value);
+        go(head,0);
+        int max = findMax();
+        printf("Maximum sum of the numbers : %d\n", max);
     }
 
     
     
 
 
-    int height = 4;
-    len = 1;  
-    for (int i = 0; i<height - 1; i++) {
-        len *= 2;
-    }
-    sumList = (int *)malloc(sizeof(int) * len);
 
     /*
     // example triangle, not dynamic now
@@ -146,6 +150,8 @@ int go(struct node * n, int topValue) {
 struct node * getNode(int value) {
     struct node * new = (struct node *)malloc(sizeof(struct node));
     new->value = value;
+    new->left = NULL;
+    new->right = NULL;
     return new;
 }
 
@@ -253,41 +259,46 @@ int getHeightOfPyramid(int len) {
 
 void createPyramid() {
     // height of pyramid = base of pyramid
-    int topLine[heightOfPyramid];
-    int botLine[heightOfPyramid];
+    struct node * topLine[heightOfPyramid];
+    struct node * botLine[heightOfPyramid];
     int topStartInd = 0;
-    int botStartInd = 0;
+    int botStartInd = 1;
     int lenTop = 1;
     int lenBot = 2;
-    for(int i = 0; i<heightOfPyramid-1; i++) {
+    head = getNode(numbers[0]);
+    topLine[0] = head;
+    for(int i = 1; i<heightOfPyramid; i++) {
+
+        // to fill top and bot line
+        /*
+        for(int j = 0; j < lenTop;j++) {
+            topLine[j] = getNode(numbers[topStartInd + j]);
+        }
+        */
+        
+        // to create nodes
+        for(int k = 0; k < lenBot; k++) {
+            botLine[k] = getNode(numbers[botStartInd + k]);
+        }
+
+        
+        // lenTop = pair of connection
+        for(int l = 0; l<lenTop; l++) {
+            topLine[l]->left = botLine[l];
+            topLine[l]->right = botLine[l+1];
+        }
+        
+        // I have to copy botLine in topLine
+        for(int i = 0 ; i<lenBot; i++) {
+            topLine[i] = botLine[i];
+        }
+        
+        
         topStartInd += i;
         botStartInd += i+1;
-        // to fill top and bot line
-        for(int j = 0; j < lenTop;j++) {
-            topLine[j] = numbers[topStartInd + j];
-        }
-        for(int k = 0; k < lenBot; k++) {
-            botLine[k] = numbers[topStartInd + k];
-        }
-        // to create nodes
-        // lenTop is number of pair of connection
-
-        for(int l = 0; l<lenTop; l++) {
-
-        }
-        for(int l = 0; l<lenBot; l++) {
-            
-        }
-        
-        
         lenTop++;
         lenBot++;
 
-    
-        /*
-        printf("a - >%d\n",a);
-        printf("b - >%d\n", b);
-        */
     }
 }
 
