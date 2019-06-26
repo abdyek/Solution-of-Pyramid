@@ -10,110 +10,50 @@ struct node {
 
 // funcs
 int go(struct node *, int);  // travel downwards and diagonally
-int isPrime(int);            // control for prime or non prime ?
+int isPrime(int);            // control for prime or non prime
 struct node * getNode(int);  // to create node with give number
 int findMax();               // find max sum of the numbers in possible way
-
-// new  SONRA SİLMEYİ UNUTMA
 int getNumberOfNodes();  // in the file
 void fillNumbersArray();  // fill number array
 int getHeightOfPyramid(int);  // for max size of line
 void createPyramid();
 void createNodes();
 
-
-
 // global variables
 int * sumList;  // list of numbers
 int indexOfList = -1;  // to write in sumList
-int len; // length of all possibility;
-// ^ len i kaldırabilirim globalden
+int len; // length of all possibility without rules
 int numberOfNodes;
 int heightOfPyramid;
 struct node * head;
-
-// new silmei unutma
 char * fileName = "triangle";
-int * numbers;
+int * numbers;      // to keep numbers before creating node
 
 int main(int argc, char *argv[]) {
-    int height = 4;
-    len = 1;  
-    for (int i = 0; i<height - 1; i++) {
-        len *= 2;
-    }
-    sumList = (int *)malloc(sizeof(int) * len);
     
     numberOfNodes = getNumberOfNodes();
     heightOfPyramid = getHeightOfPyramid(numberOfNodes);
 
     numbers = (int *)malloc(sizeof(int) * numberOfNodes);
 
+    len = 1;               
+    for (int i = 0; i<heightOfPyramid - 1; i++) {  // 2 ^ ( height of pyramid -1 ) = length of all possibility without rules
+        len *= 2;
+    }
+    sumList = (int *)malloc(sizeof(int) * len);
+
     // control for missing number
     if(heightOfPyramid==-1) {
-        printf("Missing number in your file!\n");
+        printf("!! Missing number in your file!\n");
     } else {
         fillNumbersArray();
         
-        /*
-        for(int a = 0; a<120; a++) {
-            printf("%d\n", numbers[a]);
-        }
-        */
         createPyramid();
         printf("%d\n", head->left->left->left->value);
         go(head,0);
         int max = findMax();
         printf("Maximum sum of the numbers : %d\n", max);
     }
-
-    
-    
-
-
-
-    /*
-    // example triangle, not dynamic now
-    struct node * n1 = getNode(6);
-    struct node * n2 = getNode(4);
-    struct node * n3 = getNode(2);
-    struct node * n4 = getNode(12);
-    struct node * n5 = getNode(1);
-    struct node * n6 = getNode(3);
-    struct node * n7 = getNode(0);
-    struct node * n8 = getNode(9);
-    struct node * n9 = getNode(7);
-    struct node * n10 = getNode(15);
-
-    // connection of nodes
-    n1->left = n2;
-    n1->right = n3;
-    n2->left = n4;
-    n2->right = n5;
-    n3->left = n5;
-    n3->right = n6;
-    n4->left = n7;
-    n4->right = n8;
-    n5->left = n8;
-    n5->right = n9;
-    n6->left = n9;
-    n6->right = n10;
-    n7->left = NULL;
-    n7->right = NULL;
-    n8->left =NULL;
-    n8->right =NULL;
-    n9->left =NULL;
-    n9->right = NULL;
-    n10->left =NULL;
-    n10->right = NULL;
-
-    go(n1, 0);  // first node
-    */
-
-    //int max = findMax();
-    //printf("MAX : %d \n", max);
-
-    //readFile("triangle");
 
     return 0;
 }
@@ -165,10 +105,7 @@ int findMax() {
     return max;
 }
 
-
-// new SONRA SİLMEY UNUTMA
-
-int getNumberOfNodes() {
+int getNumberOfNodes() {   // in the file , not create nodes in the function
     int lengthOfNumbers = 0;
     FILE * file = NULL;
     file = fopen(fileName, "r");
@@ -201,7 +138,7 @@ int getNumberOfNodes() {
     return lengthOfNumbers;
 }
 
-void fillNumbersArray() {   // fill numbers in number array
+void fillNumbersArray() {   // fill numbers array with numbers
     FILE * file = NULL;
     file = fopen(fileName, "r");
     if(file!=NULL) {
@@ -269,19 +206,11 @@ void createPyramid() {
     topLine[0] = head;
     for(int i = 1; i<heightOfPyramid; i++) {
 
-        // to fill top and bot line
-        /*
-        for(int j = 0; j < lenTop;j++) {
-            topLine[j] = getNode(numbers[topStartInd + j]);
-        }
-        */
-        
-        // to create nodes
+        // to create nodes in botLine
         for(int k = 0; k < lenBot; k++) {
             botLine[k] = getNode(numbers[botStartInd + k]);
         }
 
-        
         // lenTop = pair of connection
         for(int l = 0; l<lenTop; l++) {
             topLine[l]->left = botLine[l];
@@ -292,7 +221,6 @@ void createPyramid() {
         for(int i = 0 ; i<lenBot; i++) {
             topLine[i] = botLine[i];
         }
-        
         
         topStartInd += i;
         botStartInd += i+1;
